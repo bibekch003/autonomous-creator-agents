@@ -1,5 +1,8 @@
 # Autonomous Creator Agents
 
+[![CI](https://github.com/bibekch003/autonomous-creator-agents/actions/workflows/ci.yml/badge.svg)](https://github.com/bibekch003/autonomous-creator-agents/actions/workflows/ci.yml)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/bibekch003/autonomous-creator-agents)
+
 **Your AI-powered creative production team.**
 
 Upload one long video. Six specialised AI agents find the moments worth clipping, cut them
@@ -104,11 +107,35 @@ Open **http://localhost:5173**, register an account, create a project, upload a 
 
 `ffmpeg` does **not** need a separate install — `imageio-ffmpeg` ships a static binary.
 
+### Run it in the cloud, with nothing installed
+
+Click **Open in GitHub Codespaces** above (or repo → **Code → Codespaces → Create
+codespace on main**). The devcontainer installs Python, Node and all dependencies, then
+applies the migrations — about three minutes the first time. Then, in its terminal:
+
+```bash
+cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000     # terminal 1
+cd frontend && npm run dev                                        # terminal 2
+```
+
+GitHub forwards both ports and offers to open the app in your browser. To share it, right
+click port 5173 → **Port Visibility → Public**.
+
+No ffmpeg install is needed there either: `imageio-ffmpeg` ships the static binary with
+libass, which is what burns the captions.
+
 ### Everything in Docker instead
 
 ```bash
 docker compose up --build          # http://localhost:8080
 ```
+
+### What CI checks
+
+Every push runs [`.github/workflows/ci.yml`](.github/workflows/ci.yml): the 43 backend
+tests against Python 3.12, a migration applied to an empty database, and a strict
+type-check plus production build of the frontend. A green badge means the code in this
+repository actually runs.
 
 ## 4. Tests
 
