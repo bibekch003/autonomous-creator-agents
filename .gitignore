@@ -1,0 +1,37 @@
+# --- secrets & local config ------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# --- python ----------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- user content: never commit uploads, renders or the database -----------
+storage/
+*.db
+*.sqlite
+*.sqlite3
+
+# --- node / frontend -------------------------------------------------------
+node_modules/
+frontend/dist/
+.vite/
+npm-debug.log*
+yarn-error.log*
+
+# --- editors & OS ----------------------------------------------------------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- media scratch ---------------------------------------------------------
+*.part
+samples/_frames/
