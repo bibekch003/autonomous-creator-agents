@@ -1,0 +1,72 @@
+# Local development stack: backend + worker + frontend, plus optional PostgreSQL.
+#
+#   docker compose up --build                 # SQLite, everything runs
+#   docker compose --profile postgres up -d   # PostgreSQL instead of SQLite
+#
+# The SQLite database and all media live in the named volume `aca_storage`.
+
+services:
+  backend:
+    build: ./backend
+    environment:
+      ACA_ENVIRONMENT: development
+      ACA_SECRET_KEY: ${ACA_SECRET_KEY:-dev-only-change-me}
+      ACA_STORAGE_ROOT: /data
+      ACA_DATABASE_URL: ${ACA_DATABASE_URL:-}
+      ACA_COOKIE_SECURE: "false"
+      ACA_CORS_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+      ACA_LLM_API_KEY: ${ACA_LLM_API_KEY:-}
+    volumes:
+      - aca_storage:/data
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  worker:
+    build: ./backend
+    command: ["sh", "-c", "python -m app.workers.worker"]
+    environment:
+      ACA_ENVIRONMENT: development
+      ACA_SECRET_KEY: ${ACA_SECRET_KEY:-dev-only-change-me}
+      ACA_STORAGE_ROOT: /data
+      ACA_DATABASE_URL: ${ACA_DATABASE_URL:-}
+      ACA_LLM_API_KEY: ${ACA_LLM_API_KEY:-}
+    volumes:
+      - aca_storage:/data
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+  # Optional PostgreSQL. Enable with: docker compose --profile postgres up
+  postgres:
+    image: postgres:16-alpine
+    profiles: ["postgres"]
+    environment:
+      POSTGRES_USER: aca
+      POSTGRES_PASSWORD: acapassword
+      POSTGRES_DB: aca
+    volumes:
+      - aca_pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aca"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  aca_storage:
+  aca_pgdata:

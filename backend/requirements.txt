@@ -1,0 +1,26 @@
+# Backend runtime dependencies.
+#
+# Deliberately plain `uvicorn` (not uvicorn[standard]): the extra pulls PyYAML and
+# watchfiles, which lag new CPython releases and turn pip into a source build.
+fastapi>=0.110
+uvicorn>=0.27
+sqlalchemy>=2.0
+alembic>=1.13
+pydantic>=2.6
+pydantic-settings>=2.2
+email-validator>=2.1
+python-multipart>=0.0.9
+
+# media processing
+numpy>=1.26
+opencv-python-headless>=4.9,<5
+pillow>=10.2
+imageio-ffmpeg>=0.5
+
+# optional LLM adapter (only used when ACA_LLM_API_KEY is set)
+httpx>=0.27
+
+# --- optional extras, install only if you need them -------------------------
+#   faster-whisper>=1.0        local speech-to-text (set ACA_ENABLE_WHISPER=true)
+#   psycopg[binary]>=3.1       PostgreSQL driver (ACA_DATABASE_URL=postgresql+psycopg://...)
+#   gunicorn>=21               process manager for production
