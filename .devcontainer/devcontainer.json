@@ -1,0 +1,29 @@
+{
+  "name": "Autonomous Creator Agents",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    }
+  },
+  "postCreateCommand": "cd backend && pip install -r requirements.txt && alembic upgrade head && cd ../frontend && npm ci",
+  "forwardPorts": [
+    8000,
+    5173
+  ],
+  "portsAttributes": {
+    "5173": {
+      "label": "Frontend (Vite)",
+      "onAutoForward": "openBrowser"
+    },
+    "8000": {
+      "label": "Backend (FastAPI)",
+      "onAutoForward": "silent"
+    }
+  },
+  "postAttachCommand": "echo 'Start the backend:  cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000   |   then the frontend:  cd frontend && npm run dev'",
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "4gb"
+  }
+}
