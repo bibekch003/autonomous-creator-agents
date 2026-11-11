@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import { Button, ErrorNote, Field, Input } from '../components/ui'
@@ -12,6 +12,18 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [expired, setExpired] = useState(false)
+
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem('aca:session-expired')) {
+        setExpired(true)
+        sessionStorage.removeItem('aca:session-expired')
+      }
+    } catch {
+      /* private mode */
+    }
+  }, [])
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -40,6 +52,14 @@ export default function Login() {
         <div className="card p-7">
           <h1 className="heading">Welcome back</h1>
           <p className="mt-1 text-sm text-muted">Sign in to your production studio.</p>
+          {expired && (
+            <p className="mt-3 rounded-xl border border-amber-400/30 bg-amber-400/10 px-3.5 py-2.5 text-xs leading-relaxed text-amber-200">
+              Your session ended and any account you created may have been removed. On a
+              free hosting tier the database is wiped whenever the server restarts. Create
+              the account again, or connect a persistent PostgreSQL database (see
+              docs/FREE_TIER.md).
+            </p>
+          )}
 
           <form onSubmit={submit} className="mt-6 space-y-4">
             <Field label="Email">

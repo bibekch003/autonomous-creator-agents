@@ -58,6 +58,11 @@ class Settings(BaseSettings):
     clip_min_seconds: float = 3.0
     clip_max_seconds: float = 90.0
     max_segments: int = 8
+    # Export tuning. A weak host (0.1 CPU, 512 MB) cannot encode 1080x1920 at
+    # "veryfast" in reasonable time, so these are configurable per deployment.
+    export_preset: str = "veryfast"      # x264 preset; use "ultrafast" on free tiers
+    export_crf: int = 23                 # higher = faster + smaller, slightly softer
+    export_scale: float = 1.0            # 0.6 renders 648x1152 instead of 1080x1920
     enable_whisper: bool = False
     whisper_model: str = "base"
     job_poll_seconds: float = 1.5
@@ -117,6 +122,19 @@ class Settings(BaseSettings):
     @property
     def image_exts(self) -> set[str]:
         return {e.strip().lower() for e in self.allowed_image_ext.split(",") if e.strip()}
+
+    @property
+    def database_backend(self) -> str:
+        return "postgresql" if self.db_url.startswith("postgres") else "sqlite"
+
+    @property
+    def storage_is_persistent(self) -> bool:
+        """SQLite on a container filesystem is lost on every restart.
+
+        Free tiers (Render, Fly, Spaces) do not attach a disk, so this is the single
+        most common source of "my account disappeared".
+        """
+        return self.database_backend == "postgresql"
 
     @property
     def llm_enabled(self) -> bool:

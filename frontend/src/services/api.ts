@@ -35,6 +35,16 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const data = text ? safeJson(text) : null
 
   if (!res.ok) {
+    // A 401 on anything other than the auth routes means our session is gone — most
+    // often because the server restarted with an ephemeral database. Leave a breadcrumb
+    // so the login screen can explain it instead of silently bouncing the user.
+    if (res.status === 401 && !path.startsWith('/auth/')) {
+      try {
+        sessionStorage.setItem('aca:session-expired', '1')
+      } catch {
+        /* private mode */
+      }
+    }
     const detail =
       (data && (data.detail || data.message)) ||
       (typeof data === 'string' ? data : '') ||

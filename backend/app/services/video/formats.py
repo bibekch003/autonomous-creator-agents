@@ -9,7 +9,13 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
-from app.core.config import PLATFORM_PRESETS, WORK_DIR, ffmpeg_bin, ffmpeg_has
+from app.core.config import PLATFORM_PRESETS, WORK_DIR, ffmpeg_bin, ffmpeg_has, settings
+
+
+def _even(value: float) -> int:
+    """H.264 needs even dimensions."""
+    n = int(round(value))
+    return n if n % 2 == 0 else n - 1
 
 
 def _filter_graph(width: int, height: int, strategy: str) -> str:
@@ -44,7 +50,10 @@ def export_clip(
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    w, h = preset["width"], preset["height"]
+    # Honour ACA_EXPORT_SCALE so a CPU-starved host can render smaller files fast.
+    scale = max(0.2, min(1.0, float(settings.export_scale or 1.0)))
+    w = _even(preset["width"] * scale)
+    h = _even(preset["height"] * scale)
     vf = _filter_graph(w, h, preset["crop"])
     warnings: list[str] = []
 
@@ -71,7 +80,8 @@ def export_clip(
     if loudnorm:
         cmd += ["-af", "loudnorm=I=-14:TP=-1.5:LRA=11"]
     cmd += ["-filter_complex" if "[0:v]" in vf else "-vf", vf,
-            "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
+            "-c:v", "libx264", "-preset", settings.export_preset,
+            "-crf", str(settings.export_crf), "-threads", "2",
             "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k",
             "-movflags", "+faststart", str(out_path)]
 

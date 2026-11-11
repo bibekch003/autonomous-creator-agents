@@ -72,6 +72,15 @@ def health() -> dict:
         "llm_configured": ai_client.is_enabled(),
         "whisper_enabled": settings.enable_whisper,
         "max_upload_mb": settings.max_upload_mb,
+        # If this says sqlite + persistent:false, accounts and uploads are lost on every
+        # restart. That is the free-tier default on Render/Fly/Spaces.
+        "database": settings.database_backend,
+        "persistent_storage": settings.storage_is_persistent,
+        "export": {
+            "preset": settings.export_preset,
+            "crf": settings.export_crf,
+            "scale": settings.export_scale,
+        },
     }
 
 
