@@ -4,6 +4,10 @@
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/bibekch003/autonomous-creator-agents)
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/bibekch003/autonomous-creator-agents)
 
+**Live demo:** https://autonomous-creator-agents.onrender.com — free Render instance, so the
+first visit after ~15 minutes idle takes about 30 seconds to wake. Register an account and
+try the workflow; uploads are limited on the free tier and the disk is ephemeral.
+
 **Your AI-powered creative production team.**
 
 Upload one long video. Six specialised AI agents find the moments worth clipping, cut them
