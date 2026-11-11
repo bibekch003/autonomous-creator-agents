@@ -4,9 +4,14 @@
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/bibekch003/autonomous-creator-agents)
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/bibekch003/autonomous-creator-agents)
 
-**Live demo:** https://autonomous-creator-agents.onrender.com — free Render instance, so the
-first visit after ~15 minutes idle takes about 30 seconds to wake. Register an account and
-try the workflow; uploads are limited on the free tier and the disk is ephemeral.
+**Live demo:** https://autonomous-creator-agents.onrender.com
+
+> **Free-tier warning, read before you test it.** Render's free plan attaches no disk, so the
+> SQLite database is recreated on every restart — accounts and sessions disappear, and
+> rendering is slow on 0.1 CPU. That is the host, not the app. Two fixes, both free:
+> connect a PostgreSQL database (Neon) and scale the export down. Exact steps:
+> **[docs/FREE_TIER.md](docs/FREE_TIER.md)**. `GET /api/health` tells you which mode you are
+> in (`persistent_storage: false` means data will be lost).
 
 **Your AI-powered creative production team.**
 
