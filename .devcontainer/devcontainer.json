@@ -2,18 +2,14 @@
   "name": "Autonomous Creator Agents",
   "image": "mcr.microsoft.com/devcontainers/python:3.12",
   "postCreateCommand": "pip install -r backend/requirements.txt && cd backend && alembic upgrade head",
-  "postStartCommand": "cd backend && (pkill -f 'uvicorn app.main' || true) && nohup uvicorn app.main:app --host 0.0.0.0 --port 8000 > /tmp/aca-server.log 2>&1 & sleep 4; tail -n 5 /tmp/aca-server.log",
+  "postStartCommand": "cd backend && nohup uvicorn app.main:app --host 0.0.0.0 --port 8000 >/tmp/aca-server.log 2>&1 </dev/null &",
   "forwardPorts": [
     8000
   ],
   "portsAttributes": {
     "8000": {
       "label": "Autonomous Creator Agents",
-      "onAutoForward": "openBrowser"
+      "onAutoForward": "notify"
     }
-  },
-  "hostRequirements": {
-    "cpus": 2,
-    "memory": "4gb"
   }
 }
