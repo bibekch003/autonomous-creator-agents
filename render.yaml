@@ -1,0 +1,36 @@
+# One-click deploy on Render's free plan.
+#
+#   https://render.com/deploy
+#
+# Render reads this file, builds the Dockerfile at the repository root, and gives you a
+# public https://<name>.onrender.com URL serving both the API and the web app.
+#
+# Free plan caveats, stated up front:
+#   * the instance sleeps after ~15 minutes idle; the next request takes ~30s to wake
+#   * the filesystem is ephemeral, so uploads and rendered clips disappear on restart
+#     (the app handles that: missing files return 410 and can be re-uploaded)
+services:
+  - type: web
+    name: autonomous-creator-agents
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: singapore
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: ACA_ENVIRONMENT
+        value: production
+      # Render generates this once and keeps it; sessions survive restarts.
+      - key: ACA_SECRET_KEY
+        generateValue: true
+      - key: ACA_COOKIE_SECURE
+        value: "true"
+      - key: ACA_STORAGE_ROOT
+        value: /data
+      # 512 MB RAM on the free plan: keep uploads modest so FFmpeg does not OOM.
+      - key: ACA_MAX_UPLOAD_MB
+        value: "100"
+      # Leave empty for SQLite. Set a PostgreSQL URL for persistence across deploys.
+      - key: ACA_DATABASE_URL
+        value: ""
