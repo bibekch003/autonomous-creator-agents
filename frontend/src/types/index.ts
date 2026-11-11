@@ -42,6 +42,7 @@ export interface Meta {
   version: string
   platforms: Platform[]
   agents: AgentInfo[]
+  demo_mode?: boolean
   limits: {
     max_upload_mb: number
     clip_min_seconds: number

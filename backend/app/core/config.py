@@ -67,6 +67,12 @@ class Settings(BaseSettings):
     whisper_model: str = "base"
     job_poll_seconds: float = 1.5
 
+    # --- demo mode -------------------------------------------------------
+    # When true, every visitor shares one auto-created demo account and the login
+    # screen is skipped. It exists so a free-tier deploy stays usable even though the
+    # ephemeral database is wiped on every restart. Never enable it on real data.
+    demo_mode: bool = False
+
     # --- optional external AI -------------------------------------------
     llm_api_key: str = ""
     llm_base_url: str = "https://api.openai.com/v1"

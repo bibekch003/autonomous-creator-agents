@@ -9,11 +9,28 @@ from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.database import get_db
-from app.core.security import new_session_token, token_fingerprint
+from app.core.security import hash_password, new_session_token, token_fingerprint
 from app.models import User, UserSession, UserSettings
 from app.models.base import utcnow
 
 COOKIE = settings.session_cookie
+DEMO_EMAIL = "demo@creatoragents.dev"
+
+
+def demo_user(db: Session) -> User:
+    """One shared account for demo mode, recreated automatically if the DB resets."""
+    user = db.scalar(select(User).where(User.email == DEMO_EMAIL))
+    if user is None:
+        import secrets
+        user = User(email=DEMO_EMAIL, name="Demo user",
+                    password_hash=hash_password(secrets.token_urlsafe(24)))
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    if db.scalar(select(UserSettings).where(UserSettings.user_id == user.id)) is None:
+        db.add(UserSettings(user_id=user.id))
+        db.commit()
+    return user
 
 
 def _token_from(request: Request) -> str | None:
@@ -25,11 +42,12 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> User | 
     """Resolve the session cookie to a user. Returns None when absent or expired."""
     token = _token_from(request)
     if not token:
-        return None
+        # Demo mode: no cookie needed, every visitor shares one account.
+        return demo_user(db) if settings.demo_mode else None
     session = db.scalar(select(UserSession).where(
         UserSession.token_hash == token_fingerprint(token)))
     if session is None or not session.is_valid:
-        return None
+        return demo_user(db) if settings.demo_mode else None
     user = db.get(User, session.user_id)
     if user is None or not user.is_active:
         return None

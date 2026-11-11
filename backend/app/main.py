@@ -71,6 +71,7 @@ def health() -> dict:
         "caption_burn_in": ffmpeg_has("subtitles"),
         "llm_configured": ai_client.is_enabled(),
         "whisper_enabled": settings.enable_whisper,
+        "demo_mode": settings.demo_mode,
         "max_upload_mb": settings.max_upload_mb,
         # If this says sqlite + persistent:false, accounts and uploads are lost on every
         # restart. That is the free-tier default on Render/Fly/Spaces.
@@ -94,6 +95,7 @@ def meta() -> dict:
         "platforms": [{"key": k, "label": v["label"], "width": v["width"],
                        "height": v["height"]} for k, v in PLATFORM_PRESETS.items()],
         "agents": list_agents(),
+        "demo_mode": settings.demo_mode,
         "limits": {
             "max_upload_mb": settings.max_upload_mb,
             "clip_min_seconds": settings.clip_min_seconds,

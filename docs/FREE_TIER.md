@@ -58,6 +58,30 @@ rather than a 500 — re-upload to continue.
 
 ---
 
+## §1b Fastest option: turn on demo mode (30 seconds, no new account)
+
+If you only need the site *usable* right now and do not want to set up PostgreSQL, enable
+demo mode:
+
+```
+ACA_DEMO_MODE=true
+```
+
+Then the login screen is skipped entirely. Every visitor shares one automatically created
+account, which is recreated within milliseconds whenever the database resets. You cannot be
+locked out, and "no account" stops happening.
+
+Trade-offs, stated plainly:
+
+- Anyone with the URL shares the same workspace and can see and delete the same projects.
+- Data still disappears on restart — you just are not asked to sign in again.
+- Do not use it if the site holds anything you care about, or before you show it to someone
+  who might upload private footage.
+
+It is the right setting for a hackathon demo or a portfolio link on a free tier, and the
+wrong setting for anything real. Combine it with §1 (PostgreSQL) when you want both
+convenience and persistence.
+
 ## §2 Make rendering viable on 0.1 CPU (fixes slowness and crashes)
 
 Set these on the service (Render → Environment), then redeploy:

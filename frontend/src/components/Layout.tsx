@@ -87,6 +87,13 @@ export function Layout() {
       </aside>
 
       <div className="min-w-0 flex-1">
+        {meta?.demo_mode && (
+          <div className="border-b border-amber-400/25 bg-amber-400/10 px-5 py-2 text-xs text-amber-200 lg:px-8">
+            <strong className="font-semibold">Demo mode.</strong> Everyone shares one account and
+            no sign-in is needed. On a free hosting tier the database resets when the server
+            restarts, so projects can disappear — that is the host, not a bug.
+          </div>
+        )}
         <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-ink-600/70 bg-ink-900/80 px-5 py-3 backdrop-blur lg:px-8">
           <div className="flex items-center gap-2 text-sm text-muted">
             <Film size={15} className="text-cyan-300" />
