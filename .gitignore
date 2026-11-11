@@ -21,7 +21,8 @@ storage/
 
 # --- node / frontend -------------------------------------------------------
 node_modules/
-frontend/dist/
+# frontend/dist IS committed on purpose: it lets Codespaces run the app with Python
+# alone (no Node install, no build step). Regenerate with `npm run build` and commit.
 .vite/
 npm-debug.log*
 yarn-error.log*

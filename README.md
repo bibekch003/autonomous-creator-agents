@@ -117,22 +117,21 @@ Open **http://localhost:5173**, register an account, create a project, upload a 
 
 `ffmpeg` does **not** need a separate install — `imageio-ffmpeg` ships a static binary.
 
-### Run it in the cloud, with nothing installed
+### Run it on GitHub, with nothing installed
 
-Click **Open in GitHub Codespaces** above (or repo → **Code → Codespaces → Create
-codespace on main**). The devcontainer installs Python, Node and all dependencies, then
-applies the migrations — about three minutes the first time. Then, in its terminal:
+Repo → **Code → Codespaces → Create codespace on main**. The container installs the Python
+dependencies, applies the migrations **and starts the server**; then open the forwarded port
+8000 and you have the whole app — interface and API on one URL.
 
-```bash
-cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000     # terminal 1
-cd frontend && npm run dev                                        # terminal 2
-```
+No Node, no `npm install`, no build step: `frontend/dist` is committed, so `uvicorn` serves
+the prebuilt SPA alongside the API. That is also why the container is a single small image
+with no feature downloads to fail.
 
-GitHub forwards both ports and offers to open the app in your browser. To share it, right
-click port 5173 → **Port Visibility → Public**.
+Full walkthrough, sharing a public port, and Codespaces quota limits:
+**[docs/RUN_ON_GITHUB.md](docs/RUN_ON_GITHUB.md)**.
 
-No ffmpeg install is needed there either: `imageio-ffmpeg` ships the static binary with
-libass, which is what burns the captions.
+GitHub Pages cannot host this app — it serves static files only, and this needs Python,
+FFmpeg and a database. Codespaces is the GitHub-native way to run it.
 
 ### Everything in Docker instead
 
